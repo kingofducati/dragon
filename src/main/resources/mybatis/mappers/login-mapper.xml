@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ximucredit.dragon.dao.LoginMapper">
+	<resultMap id="LoginMap" type="com.ximucredit.dragon.DO.LoginDO">
+		<id property="userId" column="user_id" jdbcType="VARCHAR"/>
+		<result property="code" column="code" jdbcType="VARCHAR"/>
+		<result property="accessToken" column="access_token" jdbcType="VARCHAR"/>
+		<result property="loginTime" column="login_time" jdbcType="TIMESTAMP"/>
+		<result property="remark" column="remark" jdbcType="VARCHAR"/>
+		<result property="wechatCode" column="wechat_code" jdbcType="VARCHAR"/>
+		<result property="deviceId" column="device_id" jdbcType="VARCHAR"/>
+		<result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+		<result property="gmtModify" column="gmt_modify" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+		user_id, code, access_token, login_time, remark,wechat_code,device_id, gmt_create, gmt_modify
+	</sql>
+	
+	<select id="findById" resultMap="LoginMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_login 
+		where user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByCode" resultMap="LoginMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_login 
+		where code = #{code,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="insert" parameterType="com.ximucredit.dragon.DO.LoginDO" >
+	    insert into t_login 
+	    	(user_id, code, access_token, login_time, remark)
+	    values 
+	    	(
+	    		#{userId,jdbcType=VARCHAR}, 
+	    		#{code,jdbcType=VARCHAR}, 
+	    		#{accessToken,jdbcType=VARCHAR,}, 
+	    		#{loginTime,jdbcType=TIMESTAMP,}, 
+	      		#{remark,jdbcType=VARCHAR}
+	      	)
+	</insert>
+	
+	<insert id="insertWechatLogin" parameterType="com.ximucredit.dragon.DO.LoginDO" >
+	    insert into t_login 
+	    	(user_id, wechat_code,device_id, access_token, login_time, remark)
+	    values 
+	    	(
+	    		#{userId,jdbcType=VARCHAR}, 
+	    		#{wechatCode,jdbcType=VARCHAR},
+	    		#{deviceId,jdbcType=VARCHAR},
+	    		#{accessToken,jdbcType=VARCHAR,}, 
+	    		#{loginTime,jdbcType=TIMESTAMP,}, 
+	      		#{remark,jdbcType=VARCHAR}
+	      	)
+	</insert>
+	
+	<update id="updateByPrimaryKey" parameterType="com.ximucredit.dragon.DO.LoginDO" >
+	    update t_login
+	    <set >
+	      <if test="code != null" >
+	        code = #{code,jdbcType=VARCHAR},
+	      </if>
+	      <if test="accessToken != null" >
+	        access_token = #{accessToken,jdbcType=VARCHAR},
+	      </if>
+	      <if test="loginTime != null" >
+	        login_time = #{loginTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="remark != null" >
+	        remark = #{remark,jdbcType=VARCHAR},
+	      </if>
+	      <if test="wechatCode != null" >
+	        wechat_code = #{wechatCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="deviceId != null" >
+	        device_id = #{deviceId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="gmtModify != null" >
+	        gmt_modify = #{gmtModify,jdbcType=TIMESTAMP},
+	      </if>
+	    </set>
+	    where user_id = #{userId,jdbcType=VARCHAR}
+	</update>
+	
+</mapper>

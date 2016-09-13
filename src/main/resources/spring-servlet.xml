@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>   
+<beans xmlns="http://www.springframework.org/schema/beans"   
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"   
+    xmlns:context="http://www.springframework.org/schema/context"   
+    xsi:schemaLocation="http://www.springframework.org/schema/beans    
+    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd   
+    http://www.springframework.org/schema/context    
+    http://www.springframework.org/schema/context/spring-context-2.5.xsd">   
+    <!-- 视图 -->   
+    <bean id="viewResolver"   
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver">   
+        <!-- 使用标签库，暂时可不用 -->   
+        <!-- <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/> -->   
+        <property name="prefix" value="/jsp/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+    
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">  
+	  <property name="driverClassName">  
+	    <!-- value>com.mysql.cj.jdbc.Driver</value -->  
+	    <value>com.mysql.jdbc.Driver</value>
+	  </property>  
+	  <property name="username">  
+	    <value>root</value>  
+	  </property>  
+	  <property name="password">  
+	    <value>xmadmin123456</value>  
+	  </property>  
+	  <property name="url">  
+	    <value>jdbc:mysql://577ccc4825e77.sh.cdb.myqcloud.com:7733/projects</value>  
+	  </property> 
+	  <property name="validationQuery">
+	  	<value>SELECT 1</value>
+	  </property>
+	  <property name="testWhileIdle">
+	  	<value>true</value>
+	  </property>
+	  <property name="timeBetweenEvictionRunsMillis">
+	  	<value>3600000</value>
+	  </property>
+	  <property name="minEvictableIdleTimeMillis">
+	  	<value>18000000</value>
+	  </property>
+	  <property name="testOnBorrow">
+	  	<value>true</value>
+	  </property>
+	</bean>
+	
+	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">  
+        <property name="velocityProperties">     
+            <props>     
+                <prop key="resource.loader">class</prop>     
+                <prop key="class.resource.loader.class">     
+                    org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader     
+                </prop>     
+                <prop key="velocimacro.library"></prop>     
+            </props>     
+        </property>     
+   </bean>
+	
+	<bean id="mailSender"  
+		class="org.springframework.mail.javamail.JavaMailSenderImpl">  
+		<property name="host">  
+		    <value>smtp.ximucredit.com</value>  
+		</property>  
+		<property name="javaMailProperties">  
+		    <props>  
+		        <prop key="mail.smtp.auth">true</prop>  
+		        <prop key="mail.smtp.timeout">25000</prop>
+		        <prop key="mail.smtp.port">465</prop>
+		        <prop key="mail.smtp.socketFactory.port">465</prop>  
+				<prop key="mail.smtp.socketFactory.fallback">false</prop>  
+				<prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>    
+		    </props>  
+		</property>  
+		<property name="username">  
+		    <value>xmadmin@ximucredit.com</value>  
+		</property>  
+		<property name="password">  
+		    <value>s43534wf@$^*)_%#</value>  
+		</property>
+	</bean>
+		  
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" value="classpath:mybatis/mappers/*.xml" />
+	</bean>
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 扫描com.ximucredit.dragon.dao这个包以及它的子包下的所有映射接口类 -->
+        <property name="basePackage" value="com.ximucredit.dragon.dao" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+    </bean>
+    
+    <bean id="SpringContextHelper" class="com.ximucredit.dragon.SpringContextHelper"/>
+    
+    <!-- 配置eh缓存管理器 -->
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:ehcache.xml"/>
+	</bean>
+	 
+	<!-- 配置一个简单的缓存工厂bean对象 -->
+	<bean id="cache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+	    <property name="cacheManager" ref="cacheManager" />
+	    <!-- 使用缓存 关联ehcache.xml中的缓存配置 -->
+	    <property name="cacheName" value="projectCache" />
+	</bean>
+    
+    <bean id="projectService" class="com.ximucredit.dragon.service.imp.ProjectServiceImp"/>
+    <bean id="loginService" class="com.ximucredit.dragon.service.imp.LoginServiceImp"/>
+	<bean id="userService" class="com.ximucredit.dragon.service.imp.UserServiceImp"/>
+	<bean id="taskService" class="com.ximucredit.dragon.service.imp.TaskServiceImp"></bean>
+	<bean id="memberService" class="com.ximucredit.dragon.service.imp.MemberServiceImp"></bean>
+	<bean id="bugService" class="com.ximucredit.dragon.service.imp.ProjectBugServiceImp"></bean>
+	<bean id="qyMessageService" class="com.ximucredit.dragon.service.imp.QYMessageServiceImp"></bean>
+	<bean id="taskGroupService" class="com.ximucredit.dragon.service.imp.TaskGroupServiceImp"/>
+	<bean id="mailService" class="com.ximucredit.dragon.service.imp.MailServiceImp"/>
+	<bean id="storeManager" class="com.ximucredit.dragon.ProjectStoreManager"/>
+	<bean id="qyManagerService" class="com.ximucredit.dragon.service.imp.QYManagerServiceImp"/>
+	
+	<bean id="projectCacheEventListener" class="com.ximucredit.dragon.ProjectCacheEventListener" lazy-init="true"/>
+	
+</beans>   

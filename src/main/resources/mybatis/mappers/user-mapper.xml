@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ximucredit.dragon.dao.UserMapper">
+	<resultMap id="UserMap" type="com.ximucredit.dragon.DO.UserDO">
+		<id property="userId" column="user_id" jdbcType="VARCHAR"/>
+		<result property="qyId" column="qy_id" jdbcType="VARCHAR"/>
+		<result property="email" column="email" jdbcType="VARCHAR"/>
+		<result property="name" column="name" jdbcType="VARCHAR"/>
+		<result property="phone" column="phone" jdbcType="VARCHAR"/>
+		<result property="title" column="title" jdbcType="VARCHAR"/>
+		<result property="weixinId" column="weixin_id" jdbcType="VARCHAR"/>
+		<result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+		<result property="gender" column="gender" jdbcType="INTEGER"/>
+		<result property="departId" column="depart_id" jdbcType="VARCHAR"/>
+		<result property="delFlag" column="del_flag" jdbcType="BOOLEAN"/>
+		<result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+		<result property="gmtModify" column="gmt_modify" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+		user_id, qy_id,email, name, phone, title,depart_id,weixin_id,avatar,gender, del_flag,gmt_create, gmt_modify
+	</sql>
+	
+	<select id="listAll" resultMap="UserMap">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_user where del_flag=false
+	</select>
+	
+	<select id="findById" resultMap="UserMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_user 
+		where user_id = #{userId,jdbcType=VARCHAR} and del_flag=false
+	</select>
+	
+	<select id="findByQYId" resultMap="UserMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_user 
+		where qy_id = #{qyId,jdbcType=VARCHAR} and del_flag=false
+	</select>
+	
+	<select id="findByDepart" resultMap="UserMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_user 
+		where depart_id = #{departId,jdbcType=VARCHAR} and del_flag=false
+	</select>
+	
+	<select id="findByEmail" resultMap="UserMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_user 
+		where email = #{email,jdbcType=VARCHAR} and del_flag=false
+	</select>
+	
+	<insert id="insert" parameterType="com.ximucredit.dragon.DO.UserDO" >
+	    insert into t_user 
+	    	(
+	    		user_id, 
+	    		qy_id,
+	    		email, 
+	    		name, 
+	    		phone,
+	    		<if test="gmtCreate != null" >
+	    			gmt_create, 
+	    		</if>
+	    		<if test="gmtModify != null" >
+	    			gmt_modify, 
+	    		</if>
+	    		title,
+	    		weixin_id,
+	    		avatar,
+	    		gender,
+	    		depart_id
+	    	)
+	    values 
+	    	(
+	    		#{userId,jdbcType=VARCHAR},
+	    		#{qyId,jdbcType=VARCHAR}, 
+	    		#{email,jdbcType=VARCHAR}, 
+	    		#{name,jdbcType=VARCHAR}, 
+	    		#{phone,jdbcType=VARCHAR}, 
+	    		<if test="gmtCreate != null" >
+	    			#{gmtCreate,jdbcType=TIMESTAMP}, 
+	    		</if>
+	    		<if test="gmtModify != null" >
+	    			#{gmtModify,jdbcType=TIMESTAMP}, 
+	    		</if>
+	      		#{title,jdbcType=VARCHAR},
+	      		#{weixinId,jdbcType=VARCHAR},
+	      		#{avatar,jdbcType=VARCHAR},
+	      		#{gender,jdbcType=INTEGER},
+	      		#{departId,jdbcType=VARCHAR}
+	      	)
+	</insert>
+	
+	<update id="updateByPrimaryKey" parameterType="com.ximucredit.dragon.DO.UserDO" >
+	    update t_user
+	    <set >
+	    	<!--
+	      <if test="email != null" >
+	        email = #{email,jdbcType=VARCHAR},
+	      </if>
+	      -->
+	      <if test="qyId != null" >
+	        qy_id = #{qyId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="name != null" >
+	        name = #{name,jdbcType=VARCHAR},
+	      </if>
+	      <if test="phone != null" >
+	        phone = #{phone,jdbcType=VARCHAR},
+	      </if>
+	      <if test="gmtCreate != null" >
+			gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}, 
+		  </if>
+		  <if test="gmtModify != null" >
+			gmt_modify = #{gmtModify,jdbcType=TIMESTAMP}, 
+		  </if>
+	      <if test="title != null" >
+	        title = #{title,jdbcType=VARCHAR},
+	      </if>
+	      <if test="weixinId != null" >
+	        weixin_id = #{weixinId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="avatar != null" >
+	        avatar = #{avatar,jdbcType=VARCHAR},
+	      </if>
+	      <if test="gender != null" >
+	        gender = #{gender,jdbcType=INTEGER},
+	      </if>
+	      <if test="departId != null" >
+	        depart_id = #{departId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="delFlag != null" >
+	        del_flag= #{delFlag,jdbcType=BOOLEAN},
+	      </if>
+	    </set>
+	    where user_id = #{userId,jdbcType=VARCHAR}
+	</update>
+	
+</mapper>

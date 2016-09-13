@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ximucredit.dragon.dao.MemberMapper">
+	<resultMap id="MemberMap" type="com.ximucredit.dragon.DO.MemberDO">
+		<id property="memberId" column="member_id" jdbcType="VARCHAR"/>
+		<result property="userId" column="user_id" jdbcType="VARCHAR"/>
+		<result property="projectId" column="project_id" jdbcType="VARCHAR"/>
+		<result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+		<result property="gmtModify" column="gmt_modify" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+		member_id, user_id, project_id, gmt_create, gmt_modify
+	</sql>
+	
+	<select id="findByMemberId" resultMap="MemberMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_member 
+		where member_id = #{memberId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByUserId" resultMap="MemberMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_member 
+		where user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByProjectId" resultMap="MemberMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_member 
+		where project_id = #{projectId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByUserAndProjectId" resultMap="MemberMap">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_member 
+		where 
+			project_id = #{projectId,jdbcType=VARCHAR} 
+			and user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="insert" parameterType="com.ximucredit.dragon.DO.MemberDO" >
+	    insert into t_member 
+	    	(
+	    		member_id,
+	    		user_id, 
+	    		project_id 
+	    	)
+	    values 
+	    	(
+	    		#{memberId,jdbcType=VARCHAR}, 
+	    		#{userId,jdbcType=VARCHAR}, 
+	    		#{projectId,jdbcType=VARCHAR}  
+	      	)
+	</insert>
+	
+	<delete id="deleteMemberById" parameterType="java.lang.String">
+        delete from t_member where member_id=#{memberId,jdbcType=VARCHAR}
+    </delete>
+    
+    <delete id="deleteMemberByProjectId" parameterType="java.lang.String">
+        delete from t_member where project_id=#{projectId,jdbcType=VARCHAR}
+    </delete>
+	
+	<delete id="deleteMember">
+        delete from t_member where user_id=#{userId,jdbcType=VARCHAR} and project_id=#{projectId,jdbcType=VARCHAR}
+    </delete>
+	
+</mapper>

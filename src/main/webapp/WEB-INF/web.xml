@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  <listener>
+    <description>Spring监听器</description>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:spring-servlet.xml</param-value>
+  </context-param>
+  <servlet>
+    <description></description>
+    <display-name>ProjectView</display-name>
+    <servlet-name>ProjectView</servlet-name>
+    <servlet-class>com.ximucredit.dragon.ProjectView</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ProjectView</servlet-name>
+    <url-pattern>/view</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>wcs</display-name>
+    <servlet-name>wcs</servlet-name>
+    <servlet-class>com.ximucredit.dragon.WeChatServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>wcs</servlet-name>
+    <url-pattern>/wcs</url-pattern>
+  </servlet-mapping>
+</web-app>

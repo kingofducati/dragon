@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ximucredit.dragon.dao.ProjectMapper">
+	<resultMap id="ProjectMap" type="com.ximucredit.dragon.DO.ProjectDO">
+		<id property="projectId" column="project_id" jdbcType="VARCHAR"/>
+		<result property="projectName" column="project_name" jdbcType="VARCHAR"/>
+		<result property="projectCode" column="project_code" jdbcType="VARCHAR"/>
+		<result property="projectOwnerId" column="project_owner_id" jdbcType="VARCHAR"/>
+		<result property="projectType" column="project_type" jdbcType="VARCHAR"/>
+		<result property="projectGroup" column="project_group" jdbcType="VARCHAR"/>
+		<result property="projectZijin" column="project_zijin" jdbcType="VARCHAR"/>
+		<result property="deployTime" column="deploy_time" jdbcType="VARCHAR"/>
+		<result property="nowTaskID" column="now_task_id" jdbcType="VARCHAR"/>
+		<result property="remark" column="remark" jdbcType="VARCHAR"/>
+		<result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+		<result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+		<result property="finished" column="finished" jdbcType="BOOLEAN"/>
+		<result property="chatRoomId" column="chat_room_id" jdbcType="VARCHAR"/>
+		<result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+		<result property="gmtModify" column="gmt_modify" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+		project_id, project_name,project_code,project_owner_id,project_type,project_group,project_zijin,deploy_time, now_task_id, remark,start_time,end_time,finished,chat_room_id,gmt_create,gmt_modify
+	</sql>
+	
+	<select id="findById" resultMap="ProjectMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_project 
+		where project_id = #{projectId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findAll" resultMap="ProjectMap">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_project 
+		where isdelete=false
+	</select>
+	
+	<select id="findByUserId" resultMap="ProjectMap" parameterType="java.lang.String">
+		SELECT 
+			a.project_id, 
+			a.project_name, 
+			a.project_code, 
+			a.project_owner_id, 
+			a.project_type,
+			a.project_group, 
+			a.project_zijin,
+			a.deploy_time, 
+			a.now_task_id, 
+			a.remark, 
+			a.start_time,
+			a.end_time,
+			a.finished,
+			a.chat_room_id,
+			a.gmt_create, 
+			a.gmt_modify
+		FROM t_project a,t_member b
+		where 
+			a.project_id=b.project_id 
+			and
+			b.user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="insert" parameterType="com.ximucredit.dragon.DO.ProjectDO" >
+	    insert into t_project 
+	    	(project_id, project_name,project_code,project_owner_id,project_type,project_group,project_zijin,deploy_time, now_task_id, remark,start_time,end_time)
+	    values 
+	    	(
+	    		#{projectId,jdbcType=VARCHAR}, 
+	    		#{projectName,jdbcType=VARCHAR}, 
+	    		#{projectCode,jdbcType=VARCHAR}, 
+	    		#{projectOwnerId,jdbcType=VARCHAR}, 
+	    		#{projectType,jdbcType=VARCHAR}, 
+	    		#{projectGroup,jdbcType=VARCHAR}, 
+	    		#{projectZijin,jdbcType=VARCHAR}, 
+	    		#{deployTime,jdbcType=VARCHAR}, 
+	    		#{nowTaskID,jdbcType=VARCHAR,}, 
+	      		#{remark,jdbcType=VARCHAR},
+	      		#{startTime,jdbcType=TIMESTAMP},
+	      		#{endTime,jdbcType=TIMESTAMP}
+	      	)
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.ximucredit.dragon.DO.ProjectDO" >
+	    update t_project
+	    <set >
+	      <if test="projectName != null" >
+	        project_name = #{projectName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="projectCode != null" >
+	        project_code = #{projectCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="projectOwnerId != null" >
+	        project_owner_id = #{projectOwnerId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="projectType != null" >
+	        project_type = #{projectType,jdbcType=VARCHAR},
+	      </if>
+	      <if test="projectGroup != null" >
+	        project_group = #{projectGroup,jdbcType=VARCHAR},
+	      </if>
+	      <if test="projectZijin != null" >
+	        project_zijin = #{projectZijin,jdbcType=VARCHAR},
+	      </if>
+	      <if test="deployTime != null" >
+	        deploy_time = #{deployTime,jdbcType=VARCHAR},
+	      </if>
+	      <if test="nowTaskID != null" >
+	        now_task_id = #{nowTaskID,jdbcType=VARCHAR},
+	      </if>
+	      <if test="remark != null" >
+	        remark = #{remark,jdbcType=VARCHAR},
+	      </if>
+	      <if test="finished != null" >
+	        finished = #{finished,jdbcType=BOOLEAN},
+	      </if>
+	      <if test="chatRoomId != null" >
+	      	chat_room_id = #{chatRoomId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="gmtModify != null" >
+	        gmt_modify = #{gmtModify,jdbcType=TIMESTAMP},
+	      </if>
+	      start_time = #{startTime,jdbcType=TIMESTAMP},
+	      end_time = #{endTime,jdbcType=TIMESTAMP}
+	    </set>
+	    where project_id = #{projectId,jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="deleteProject" parameterType="java.lang.String">
+        delete from t_project where project_id=#{projectId,jdbcType=VARCHAR}
+    </delete>
+</mapper>

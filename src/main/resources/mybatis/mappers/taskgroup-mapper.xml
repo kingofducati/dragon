@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ximucredit.dragon.dao.TaskGroupMapper">
+	<resultMap id="TaskGroupMap" type="com.ximucredit.dragon.DO.TaskGroupDO">
+		<id property="taskGroupId" column="taskgroup_id" jdbcType="VARCHAR"/>
+		<result property="taskGroupName" column="taskgroup_name" jdbcType="VARCHAR"/>
+		<result property="parentTaskGroupId" column="parent_id" jdbcType="VARCHAR"/>
+		<result property="taskGroupType" column="taskgroup_type" jdbcType="VARCHAR"/>
+		<result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+		<result property="gmtModify" column="gmt_modify" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+		taskgroup_id, taskgroup_name, parent_id, taskgroup_type, gmt_create, gmt_modify
+	</sql>
+	
+	<select id="findRootByType" resultMap="TaskGroupMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_taskgroup 
+		where parent_id = '' and taskgroup_type = #{taskGroupType,jdbcType=VARCHAR}
+		order by taskgroup_name
+	</select>
+	
+	<insert id="insert" parameterType="com.ximucredit.dragon.DO.TaskGroupDO" >
+	    insert into t_taskgroup 
+	    	(
+	    		taskgroup_id, 
+	    		taskgroup_name, 
+	    		parent_id, 
+	    		taskgroup_type
+	    	)
+	    values 
+	    	(
+	    		#{taskGroupId,jdbcType=VARCHAR}, 
+	    		#{taskGroupName,jdbcType=VARCHAR}, 
+	    		#{parentTaskGroupId,jdbcType=VARCHAR}, 
+	    		#{taskGroupType,jdbcType=VARCHAR}
+	      	)
+	</insert>
+	
+	<update id="updateByPrimaryKey" parameterType="com.ximucredit.dragon.DO.TaskGroupDO" >
+	    update t_taskgroup
+	    <set >
+	      <if test="taskGroupName != null" >
+	        taskgroup_name = #{taskGroupName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="parentTaskGroupId != null" >
+	        parent_id = #{parentTaskGroupId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="taskGroupType != null" >
+	        taskgroup_type = #{taskGroupType,jdbcType=VARCHAR},
+	      </if>
+	      <if test="gmtCreate != null" >
+			gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}, 
+		  </if>
+		  <if test="gmtModify != null" >
+			gmt_modify = #{gmtModify,jdbcType=TIMESTAMP}, 
+		  </if>
+	    </set>
+	    where taskgroup_id = #{taskGroupId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="selectTaskGroupsByParent" resultMap="TaskGroupMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from t_taskgroup  
+		where parent_id = #{parentTaskGroupId,jdbcType=VARCHAR} 
+		order by taskgroup_name
+	</select>
+	
+	<delete id="deleteTaskGroupById" parameterType="java.lang.String">
+        delete from t_taskgroup where taskgroup_id=#{taskGroupId,jdbcType=VARCHAR} or parent_id = #{taskGroupId,jdbcType=VARCHAR}
+    </delete>
+    
+    <delete id="deleteTaskGroupsByType" parameterType="java.lang.String">
+        delete from t_taskgroup where taskgroup_type = #{taskGroupType,jdbcType=VARCHAR}
+    </delete>
+	
+</mapper>

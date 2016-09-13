@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ximucredit.dragon.dao.TaskMapper">
+	<resultMap id="TaskMap" type="com.ximucredit.dragon.DO.TaskDO">
+		<id property="taskId" column="task_id" jdbcType="VARCHAR"/>
+		<result property="creatorId" column="creator_id" jdbcType="VARCHAR"/>
+		<result property="executorId" column="executor_id" jdbcType="VARCHAR"/>
+		<result property="projectId" column="project_id" jdbcType="VARCHAR"/>
+		<result property="done" column="done" jdbcType="BOOLEAN"/>
+		<result property="priority" column="priority" jdbcType="INTEGER"/>
+		<result property="dueDate" column="due_date" jdbcType="TIMESTAMP"/>
+		<result property="startDate" column="start_date" jdbcType="TIMESTAMP"/>
+		<result property="endDate" column="end_date" jdbcType="TIMESTAMP"/>
+		<result property="note" column="note" jdbcType="VARCHAR"/>
+		<result property="content" column="content" jdbcType="VARCHAR"/>
+		<result property="accomplished" column="accomplished" jdbcType="TIMESTAMP"/>
+		<result property="taskGroupId" column="taskgroup_id" jdbcType="VARCHAR"/>
+		<result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+		<result property="gmtModify" column="gmt_modify" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+		task_id, creator_id, executor_id, project_id, done, priority, due_date,start_date,end_date,note,content,accomplished,taskgroup_id, gmt_create, gmt_modify
+	</sql>
+	
+	<select id="findById" resultMap="TaskMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_task 
+		where task_id = #{taskId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectByTaskGroupIdAndProjectId" resultMap="TaskMap">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_task 
+		where 
+		taskgroup_id = #{taskGroupId,jdbcType=VARCHAR} 
+		and 
+		project_id = #{projectId,jdbcType=VARCHAR} 
+		order by gmt_create
+	</select>
+	
+	<insert id="insert" parameterType="com.ximucredit.dragon.DO.TaskDO" >
+	    insert into t_task 
+	    	(
+	    		task_id, 
+	    		creator_id, 
+	    		executor_id, 
+	    		project_id,
+	    		done,
+	    		priority,
+	    		due_date,
+	    		start_date,
+	    		end_date,
+	    		note,
+	    		content,
+	    		taskgroup_id,
+	    		accomplished
+	    	)
+	    values 
+	    	(
+	    		#{taskId,jdbcType=VARCHAR}, 
+	    		#{creatorId,jdbcType=VARCHAR}, 
+	    		#{executorId,jdbcType=VARCHAR}, 
+	    		#{projectId,jdbcType=VARCHAR}, 
+	    		#{done,jdbcType=BOOLEAN},
+	    		#{priority,jdbcType=INTEGER},
+	    		#{dueDate,jdbcType=TIMESTAMP},
+	    		#{startDate,jdbcType=TIMESTAMP},
+	    		#{endDate,jdbcType=TIMESTAMP},
+	    		#{note,jdbcType=VARCHAR},
+	    		#{content,jdbcType=VARCHAR},
+	    		#{taskGroupId,jdbcType=VARCHAR},
+	      		#{accomplished,jdbcType=TIMESTAMP}
+	      	)
+	</insert>
+	
+	<update id="updateByPrimaryKey" parameterType="com.ximucredit.dragon.DO.TaskDO" >
+	    update t_task
+	    <set >
+	      <if test="creatorId != null" >
+	        creator_id = #{creatorId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="executorId != null" >
+	        executor_id = #{executorId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="projectId != null" >
+	        project_id = #{projectId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="done != null" >
+	        done = #{done,jdbcType=BOOLEAN},
+	      </if>
+	      <if test="priority != null" >
+	        priority = #{priority,jdbcType=INTEGER},
+	      </if>
+	      <if test="note != null" >
+	        note = #{note,jdbcType=VARCHAR},
+	      </if>
+	      <if test="content != null" >
+	        content = #{content,jdbcType=VARCHAR},
+	      </if>
+	      <if test="taskGroupId != null" >
+	        taskgroup_id = #{taskGroupId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="gmtCreate != null" >
+			gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}, 
+		  </if>
+		  <if test="gmtModify != null" >
+			gmt_modify = #{gmtModify,jdbcType=TIMESTAMP}, 
+		  </if>
+	      <if test="accomplished != null" >
+	        accomplished = #{accomplished,jdbcType=TIMESTAMP},
+	      </if>
+	      due_date = #{dueDate,jdbcType=TIMESTAMP},
+	      start_date = #{startDate,jdbcType=TIMESTAMP},
+	      end_date = #{endDate,jdbcType=TIMESTAMP}
+	    </set>
+	    where task_id = #{taskId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="selectTaskByProjectId" resultMap="TaskMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from t_task  
+		where project_id = #{projectId,jdbcType=VARCHAR} 
+		order by gmt_create
+	</select>
+	
+	<delete id="deleteTask" parameterType="java.lang.String">
+        delete from t_task where task_id=#{taskId,jdbcType=VARCHAR}
+    </delete>
+    
+    <delete id="deleteTasks" parameterType="java.lang.String">
+        delete from t_task where project_id=#{projectId,jdbcType=VARCHAR}
+    </delete>
+	
+</mapper>

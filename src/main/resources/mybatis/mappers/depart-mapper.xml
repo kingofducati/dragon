@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ximucredit.dragon.dao.DepartMapper">
+	<resultMap id="DepartMap" type="com.ximucredit.dragon.DO.DepartDO">
+		<id property="departId" column="depart_id" jdbcType="VARCHAR"/>
+		<result property="departName" column="depart_name" jdbcType="VARCHAR"/>
+		<result property="parentId" column="parent_id" jdbcType="VARCHAR"/>
+		<result property="delFlag" column="del_flag" jdbcType="BOOLEAN"/>
+		<result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+		<result property="gmtModify" column="gmt_modify" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+		depart_id, depart_name, parent_id, del_flag,gmt_create, gmt_modify
+	</sql>
+	
+	<select id="listAll" resultMap="DepartMap">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_department where del_flag=false
+	</select>
+	
+	<select id="findById" resultMap="DepartMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_department 
+		where depart_id = #{departId,jdbcType=VARCHAR} and del_flag=false
+	</select>
+	
+	<select id="findByParent" resultMap="DepartMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_department 
+		where 
+		del_flag=false
+		<if test="parentId != null" >
+		and parent_id = #{parentId,jdbcType=VARCHAR}
+		</if>
+		<if test="parentId == null" >
+		and parent_id is null
+		</if>
+		
+	</select>
+	
+	<insert id="insert" parameterType="com.ximucredit.dragon.DO.DepartDO" >
+	    insert into t_department 
+	    	(
+	    		depart_id, 
+	    		depart_name, 
+	    		<if test="gmtCreate != null" >
+	    			gmt_create, 
+	    		</if>
+	    		<if test="gmtModify != null" >
+	    			gmt_modify, 
+	    		</if>
+	    		parent_id
+	    	)
+	    values 
+	    	(
+	    		#{departId,jdbcType=VARCHAR}, 
+	    		#{departName,jdbcType=VARCHAR}, 
+	    		<if test="gmtCreate != null" >
+	    			#{gmtCreate,jdbcType=TIMESTAMP}, 
+	    		</if>
+	    		<if test="gmtModify != null" >
+	    			#{gmtModify,jdbcType=TIMESTAMP}, 
+	    		</if>
+	      		#{parentId,jdbcType=VARCHAR}
+	      	)
+	</insert>
+	
+	<update id="updateByPrimaryKey" parameterType="com.ximucredit.dragon.DO.DepartDO" >
+	    update t_department
+	    <set >
+	    	<!--
+	      <if test="email != null" >
+	        email = #{email,jdbcType=VARCHAR},
+	      </if>
+	      -->
+	      <if test="departName != null" >
+	        depart_name = #{departName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="parentId != null" >
+	        parent_id = #{parentId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="gmtCreate != null" >
+			gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}, 
+		  </if>
+		  <if test="gmtModify != null" >
+			gmt_modify = #{gmtModify,jdbcType=TIMESTAMP}, 
+		  </if>
+		  <if test="delFlag != null" >
+	        del_flag= #{delFlag,jdbcType=BOOLEAN},
+	      </if>
+	    </set>
+	    where depart_id = #{departId,jdbcType=VARCHAR}
+	</update>
+	
+</mapper>
