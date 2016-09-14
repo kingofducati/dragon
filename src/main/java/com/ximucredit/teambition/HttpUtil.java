@@ -22,7 +22,7 @@ public class HttpUtil {
 	
 	/**
 	 * @param url
-	 * @param params	参数格式：k1=v1,k2=v2,k3=v3
+	 * @param params	参数格式：k1=v1,k2=v2,k3=v3; 或者json格式
 	 * @param headers   参数格式：k1=v1,k2=v2,k3=v3
 	 * @return
 	 * @throws IOException 
