@@ -41,6 +41,13 @@
 		where qy_id = #{qyId,jdbcType=VARCHAR} and del_flag=false
 	</select>
 	
+	<select id="findByWXId" resultMap="UserMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		FROM t_user 
+		where weixin_id = #{weixinId,jdbcType=VARCHAR} and del_flag=false
+	</select>
+	
 	<select id="findByDepart" resultMap="UserMap" parameterType="java.lang.String">
 		SELECT 
 		<include refid="Base_Column_List" /> 

@@ -8,11 +8,34 @@ Ext.define('Dragon.OrganizationPanel',{
             iconCls:'accordion'
         };
     },
+    createOrgPanel:function(){
+    	var org=Ext.create('Ext.panel.Panel',{
+    		layout:'border',
+    		width:'100%',
+    		items:[{
+    			xtype:'treepanel',
+    			region:'west',
+    			width:'50%'
+    		},{
+    			xtype:'dataview',
+    			region:'center',
+    			width:'50%',
+    			tpl:new Ext.XTemplate(
+    				'<div class="useritem">{name}</div>'
+    			),
+    			itemSelector:'div.useritem'
+    		}]
+    	});
+    	
+    	return org;
+    },
     createWindow : function(){
     	 var desktop = this.app.getDesktop();
          var win = desktop.getWindow('organization-win');
          
          if (!win) {
+        	 var org=this.createOrgPanel();
+        	 
         	 win = desktop.createWindow({
                  id: 'organization-win',
                  title: '通信录',
@@ -23,7 +46,7 @@ Ext.define('Dragon.OrganizationPanel',{
                  //border: false,
  				 tbar: [],
  				 layout:'fit',
-                 items: []
+                 items: [org]
         	 });
          }
          

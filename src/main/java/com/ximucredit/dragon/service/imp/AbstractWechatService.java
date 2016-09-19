@@ -27,11 +27,11 @@ import com.ximucredit.teambition.HttpUtil;
 public abstract class AbstractWechatService {
 	public final static String WX_BASE="https://qyapi.weixin.qq.com/";
 	
-	public String corpID="wx7064134cd009c9ed";
-	public String secret="rtwOPVbOC-KLuPsnS9qi4bv1_badDUmUtYspmESK107rMvAERHzN-jipT4Nxl4gl";
+	protected String corpID="wx7064134cd009c9ed";
+	protected String secret="rtwOPVbOC-KLuPsnS9qi4bv1_badDUmUtYspmESK107rMvAERHzN-jipT4Nxl4gl";
 	
-	private String accessToken;
-	private long expiresTime;
+	protected String accessToken;
+	protected long expiresTime;
 	
 	public String getToken() {
 		return getAccessToken();

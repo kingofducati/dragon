@@ -33,6 +33,7 @@ import com.ximucredit.dragon.service.MailService;
 import com.ximucredit.dragon.service.MemberService;
 import com.ximucredit.dragon.service.ProjectBugService;
 import com.ximucredit.dragon.service.ProjectService;
+import com.ximucredit.dragon.service.QYLoginService;
 import com.ximucredit.dragon.service.TaskGroupService;
 import com.ximucredit.dragon.service.TaskService;
 import com.ximucredit.dragon.service.UserService;
@@ -63,9 +64,24 @@ public class ProjectStoreManager implements InitializingBean{
 	private List<String> projectTypes;
 	private Map<String,String> taskDefs;
 	private Map<String, String> groupDefs;
+	private Map<String,QYLoginService> wechatLoginServiceCached;
 	
 	public ProjectStoreManager() {
-		
+		wechatLoginServiceCached=new HashMap<String,QYLoginService>();
+	}
+	
+	public void registerLoginService(String key,QYLoginService service){
+		if(this.wechatLoginServiceCached!=null){
+			this.wechatLoginServiceCached.put(key, service);
+		}
+	}
+	
+	public QYLoginService getLoginService(String key){
+		return this.wechatLoginServiceCached.get(key);
+	}
+	
+	public void removeLoginService(String key){
+		this.wechatLoginServiceCached.remove(key);
 	}
 	
 	private void addMemberToProject(ProjectDO newProject, UserDO user) {
@@ -389,8 +405,8 @@ public class ProjectStoreManager implements InitializingBean{
 	public void saveBug(JSONObject o, String projectId, String userId) {
 		String bugId=null;
 		boolean isNew=false;
-		if(!o.isNull("id")){
-			bugId=o.getString("id");
+		if(!o.isNull("bugId")){
+			bugId=o.getString("bugId");
 		}
 		if(bugId!=null&&userId!=null&&projectId!=null){
 			ProjectBugDO bug=this.findBug(userId, projectId, bugId); 
@@ -625,6 +641,16 @@ public class ProjectStoreManager implements InitializingBean{
 				file.delete();
 			}
 		}
+	}
+	
+	public void sendBundleEmail(UserDO user,String code,String unionid) {
+//		String link="http://pm.ximucredit.com:8080/dragon/view?command=confirm_email&user="+user.getEmail()+"&code="+code+"&pc="+unionid;
+		String link="http://localhost:8080/dragon/view?command=confirm_email&user="+user.getEmail()+"&code="+code+"&pc="+unionid;
+		Map<String, Object> values=new HashMap<String, Object>();
+		values.put("username", user.getName());
+		values.put("link", link);
+		
+		mailService.sendMailByTempelete(user.getEmail(), "企业验证邮件", "bundle-tempelte.vm", values, null);
 	}
 
 	private void sendEmail(String email, String title,String tempFilePath) {

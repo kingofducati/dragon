@@ -6,6 +6,7 @@ import com.ximucredit.dragon.DO.UserDO;
 
 public interface UserMapper {
 	public UserDO findById(String userId);
+	public UserDO findByWXId(String weixinId);
 	public UserDO findByEmail(String email);
 	public void insert(UserDO userDO);
 	public void updateByPrimaryKey(UserDO userDO);

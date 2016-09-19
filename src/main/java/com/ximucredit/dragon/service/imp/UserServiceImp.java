@@ -49,4 +49,8 @@ public class UserServiceImp implements UserService {
 	public List<UserDO> listAllUsers() {
 		return userMapper.listAll();
 	}
+	
+	public UserDO findByWechatId(String weixinId) {
+		return userMapper.findByWXId(weixinId);
+	}
 }

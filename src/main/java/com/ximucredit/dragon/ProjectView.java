@@ -35,6 +35,7 @@ import com.ximucredit.dragon.DO.ProjectDO;
 import com.ximucredit.dragon.DO.TaskDO;
 import com.ximucredit.dragon.DO.TaskGroupDO;
 import com.ximucredit.dragon.DO.UserDO;
+import com.ximucredit.dragon.service.imp.QYLoginServiceImp;
 import com.ximucredit.dragon.util.Utils;
 import com.ximucredit.teambition.Client;
 import com.ximucredit.teambition.Util;
@@ -466,22 +467,27 @@ public class ProjectView extends HttpServlet {
 				log.log(Level.INFO, "Code:" + code);
 				request.getSession().setAttribute("code", code);
 
-				client.loadToken(code);
+				//client.loadToken(code);
 
-				String token = client.getAccess_token();
-				log.log(Level.INFO, "Token:" + token);
+				//String token = client.getAccess_token();
+				//log.log(Level.INFO, "Token:" + token);
 
-				String userRes = client.loadMe(token);
+				//String userRes = client.loadMe(token);
 
-				UserDO user = loadUser(userRes);
+				//UserDO user = loadUser(userRes);
 
-				if (token != null && token.length() > 0) {
-					request.getSession().setAttribute("token", token);
+//				if (token != null && token.length() > 0) {
+//					request.getSession().setAttribute("token", token);
+//					request.getSession().setAttribute("me", user.getUserId());
+//				}
+				
+				UserDO user=getWechatUser(code);
+				if(user!=null){
 					request.getSession().setAttribute("me", user.getUserId());
+				}else{
+					response.sendRedirect("login.jsp");
+					return;
 				}
-
-				storeManager.updateUser(user);
-				storeManager.updateLogin(user, token, code);
 			} else if (request.getSession().getAttribute("code") == null) {
 //				client.setAccess_token("1Lo6iKSEZphKjkvv8zK1uaWldKw=NXQ7usJY70b066345a601bfbd3e78a8959a368b89fdd68609ef51ec020ff186c0836df6065268f321675c0cf215d94f2fd99d6b67812a2d58d8d8d487ecbd61c8bb42ec30d29a06ff8d22eb83c56f752a7d29671a1a6cf1296372197eb84bd77f1a96529c85d13735b520eb183cea587fffc50c1");
 //				String token = client.getAccess_token();
@@ -499,6 +505,27 @@ public class ProjectView extends HttpServlet {
 			request.getRequestDispatcher("error.html").forward(request,
 					response);
 		}
+	}
+
+	private UserDO getWechatUser(String code) {
+		
+		QYLoginServiceImp loginService=(QYLoginServiceImp)storeManager.getLoginService(code);
+		
+		if(loginService==null) {
+			loginService=new QYLoginServiceImp(code);
+			
+			storeManager.registerLoginService(code, loginService);
+		}
+		
+		String token=loginService.getToken();
+		
+		UserDO user=loginService.getQYLoginUser();
+		
+		if(user!=null){
+			storeManager.updateLogin(user, token, code);
+		}
+		
+		return user;
 	}
 
 	private void doList(HttpServletRequest request, HttpServletResponse response)
@@ -861,7 +888,9 @@ public class ProjectView extends HttpServlet {
 				}
 			} else if("login".equals(command)){
 				doLogin(request, response);
-			} else if ("exportexcel".equals(command)) {
+			} else if("confirm_email".equals(command)){
+				doBundle(request, response);
+			}else if ("exportexcel".equals(command)) {
 				doExportExcel(request, response);
 			} else if ("save".equals(command)) {
 				doSave(request, response);
@@ -915,15 +944,42 @@ public class ProjectView extends HttpServlet {
 		}
 	}
 
+	private void doBundle(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			String code=request.getParameter("code");
+			String unionid=request.getParameter("pc");
+			String email=request.getParameter("user");
+			QYLoginServiceImp loginService=(QYLoginServiceImp)storeManager.getLoginService(code);
+			if(loginService!=null&&loginService.getUnionId().equals(unionid)){
+				UserDO user=storeManager.findUserByEmail(email);
+				user.setWeixinId(unionid);
+				
+				storeManager.updateUser(user);
+				
+				request.getSession().setAttribute("me", user.getUserId());
+				
+				response.sendRedirect("project.jsp");
+			}else{
+				request.getRequestDispatcher("error.html").forward(request,
+							response);
+			}
+		} catch (ServletException | IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
 	private void doLogin(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String email=request.getParameter("username");
 		if(email!=null){
 			UserDO user = storeManager.findUserByEmail(email);
 			if(user!=null){
-				request.getSession().setAttribute("me", user.getUserId());
+				String code=(String)request.getSession().getAttribute("code");
+				QYLoginServiceImp loginService=(QYLoginServiceImp)storeManager.getLoginService(code);
+				storeManager.sendBundleEmail(user, code, loginService.getUnionId());
 				
-				response.sendRedirect("project.jsp");
+				response.sendRedirect("bundle.jsp");
 			}
 		}
 	}

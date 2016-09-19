@@ -43,7 +43,7 @@ Ext.define('bug', {
             { name: 'priority' },
             { name: 'state' }
     ],
-    idField: 'id'
+    idField: 'bugId'
 });
 
 
@@ -239,7 +239,7 @@ function createBugGrid(p_projectId){
 									timeout: 300000,
 									params : { 
 										'command' :'createChat',
-										'id':rec.getData().id,
+										'bugId':rec.getData().bugId,
 										'projectId':rec.get('projectId')
 									}, 
 									success : function(response, options) {
