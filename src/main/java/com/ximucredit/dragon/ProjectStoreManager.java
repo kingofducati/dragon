@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.ximucredit.dragon.DO.DepartDO;
 import com.ximucredit.dragon.DO.MemberDO;
 import com.ximucredit.dragon.DO.ProjectBugDO;
 import com.ximucredit.dragon.DO.ProjectDO;
@@ -34,6 +35,7 @@ import com.ximucredit.dragon.service.MemberService;
 import com.ximucredit.dragon.service.ProjectBugService;
 import com.ximucredit.dragon.service.ProjectService;
 import com.ximucredit.dragon.service.QYLoginService;
+import com.ximucredit.dragon.service.QYManagerService;
 import com.ximucredit.dragon.service.TaskGroupService;
 import com.ximucredit.dragon.service.TaskService;
 import com.ximucredit.dragon.service.UserService;
@@ -60,6 +62,8 @@ public class ProjectStoreManager implements InitializingBean{
 	private TaskGroupService taskGroupService;
 	@Autowired
 	private MailService mailService;
+	@Autowired
+	private QYManagerService managerService;
 	
 	private List<String> projectTypes;
 	private Map<String,String> taskDefs;
@@ -326,6 +330,10 @@ public class ProjectStoreManager implements InitializingBean{
 	
 	public List<UserDO> listUsers(){
 		return this.projectService.listUsers();
+	}
+	
+	public List<UserDO> listUsers(String departId){
+		return this.managerService.queryUserByDepartId(departId);
 	}
 
 	public List<UserDO> listUsers(String userId,String projectId){
@@ -767,6 +775,10 @@ public class ProjectStoreManager implements InitializingBean{
 			}
 		}
 		return headers;
+	}
+	
+	public List<DepartDO> getDepartByParentID(String parentId){
+		return managerService.queryDepartByParent(parentId);
 	}
 
 	public void flush() {

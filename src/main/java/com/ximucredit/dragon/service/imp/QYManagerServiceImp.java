@@ -270,6 +270,10 @@ public class QYManagerServiceImp extends AbstractWechatService implements
 		return null;
 	}
 	
+	public List<UserDO> queryUserByDepartId(String departId){
+		return this.userMapper.findByDepart(departId);
+	}
+	
 	public UserDO findBDUserByEmail(String email){
 		return this.userMapper.findByEmail(email);
 	}

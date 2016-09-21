@@ -21,7 +21,6 @@
 <script type="text/javascript" src="resources/organization.js"></script>
 <script type="text/javascript" src="resources/desktop.js"></script>
 <script id="themescript" type="text/javascript" src="resources/packages/ext-theme-neptune/build/ext-theme-neptune.js" defer=""></script>
-
 </head>
 <body>
 </body>

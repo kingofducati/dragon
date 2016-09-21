@@ -23,6 +23,7 @@ public interface QYManagerService {
 	public void createQYUser(UserDO user);
 	public void updateQYUser(UserDO user);
 	public void deleteQYUser(String userId);
+	public List<UserDO> queryUserByDepartId(String departId);
 	public List<UserDO> queryUserFromRemote(String departId);
 	public UserDO findBDUserByEmail(String email);
 	public void insertBDUser(UserDO user);

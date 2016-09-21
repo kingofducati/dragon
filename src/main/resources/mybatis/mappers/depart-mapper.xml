@@ -33,12 +33,7 @@
 		FROM t_department 
 		where 
 		del_flag=false
-		<if test="parentId != null" >
 		and parent_id = #{parentId,jdbcType=VARCHAR}
-		</if>
-		<if test="parentId == null" >
-		and parent_id is null
-		</if>
 		
 	</select>
 	

@@ -29,6 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.qq.weixin.mp.aes.WechatUser;
+import com.ximucredit.dragon.DO.DepartDO;
 import com.ximucredit.dragon.DO.MemberDO;
 import com.ximucredit.dragon.DO.ProjectBugDO;
 import com.ximucredit.dragon.DO.ProjectDO;
@@ -793,18 +794,38 @@ public class ProjectView extends HttpServlet {
 					}
 				} else {
 					String projectId = request.getParameter("projectId");
-					List<UserDO> users = storeManager.listUsers(userId,
-							projectId);
-
-					for (UserDO user : users) {
-						JSONObject jo = new JSONObject();
-						jo.put("userId", user.getUserId());
-						jo.put("email", user.getEmail());
-						jo.put("name", user.getName());
-						jo.put("phone", user.getPhone());
-						jo.put("title", user.getTitle());
-
-						ja.put(jo);
+					
+					if(projectId!=null){
+						List<UserDO> users = storeManager.listUsers(userId,
+								projectId);
+	
+						for (UserDO user : users) {
+							JSONObject jo = new JSONObject();
+							jo.put("userId", user.getUserId());
+							jo.put("email", user.getEmail());
+							jo.put("name", user.getName());
+							jo.put("phone", user.getPhone());
+							jo.put("title", user.getTitle());
+	
+							ja.put(jo);
+						}
+					} else {
+						String departId=request.getParameter("departId");
+						
+						List<UserDO> users = storeManager.listUsers(departId);
+						
+						for (UserDO user : users) {
+							JSONObject jo = new JSONObject();
+							jo.put("userId", user.getUserId());
+							jo.put("email", user.getEmail());
+							jo.put("name", user.getName());
+							jo.put("phone", user.getPhone());
+							jo.put("title", user.getTitle());
+							jo.put("image", user.getAvatar());
+							jo.put("gender", user.getGender());
+	
+							ja.put(jo);
+						}
 					}
 				}
 			}
@@ -932,6 +953,8 @@ public class ProjectView extends HttpServlet {
 				doSaveTask(request, response);
 			} else if ("removeTask".equals(command)) {
 				doRemoveTask(request, response);
+			} else if ("organization".equals(command)) {
+				doOrganization(request, response);
 			} else if ("saveUser".equals(command)) {
 
 			} else if ("removeUser".equals(command)) {
@@ -941,6 +964,40 @@ public class ProjectView extends HttpServlet {
 			}
 		} else {
 			doIndex(request, response);
+		}
+	}
+
+	private void doOrganization(HttpServletRequest request, HttpServletResponse response) {
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+			StringBuilder sb = new StringBuilder();
+
+			String userId = (String) request.getSession().getAttribute("me");
+			if (userId != null) {
+				String parentId = request.getParameter("parentId");
+				if (parentId != null) {
+					List<DepartDO> departs = storeManager.getDepartByParentID("root".equals(parentId)?"0":parentId);
+					if (departs != null) {
+						JSONArray jsonArray=new JSONArray();
+						for(DepartDO departDO:departs){
+							JSONObject jo = new JSONObject();
+							jo.put("id", departDO.getDepartId());
+							jo.put("text", departDO.getDepartName());
+							jo.put("leaf", false);
+							
+							jsonArray.put(jo);
+						}
+
+						sb.append(jsonArray.toString());
+					}
+				}
+			}
+			out.print(sb.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			out.close();
 		}
 	}
 
